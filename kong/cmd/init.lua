@@ -1,9 +1,6 @@
-require "kong.core.globalpatches"
-
-math.randomseed()
-
 local pl_app = require "pl.lapp"
 local log = require "kong.cmd.utils.log"
+local meta = require "kong.meta"
 
 local options = [[
  --v         verbose
@@ -34,10 +31,8 @@ table.sort(cmds_arr)
 
 local help = string.format([[
 Usage: kong COMMAND [OPTIONS]
-
 The available commands are:
  %s
-
 Options:
 %s
 ]], table.concat(cmds_arr, "\n "), options)
@@ -80,7 +75,7 @@ return function(args)
     log.set_lvl(log.levels.debug)
   end
 
-  log.verbose("Kong: %s", _KONG._VERSION)
+  log.verbose("Kong: %s", meta._VERSION)
   log.debug("ngx_lua: %s", ngx.config.ngx_lua_version)
   log.debug("nginx: %s", ngx.config.nginx_version)
   log.debug("Lua: %s", jit and jit.version or _VERSION)

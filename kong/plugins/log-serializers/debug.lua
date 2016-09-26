@@ -1,13 +1,12 @@
 local _M = {}
 
 function _M.serialize(ngx)
+  local debug_ctx = ngx.ctx.debug_log or {}
   local authenticated_entity
   if ngx.ctx.authenticated_credential ~= nil then
     authenticated_entity = {
       id = ngx.ctx.authenticated_credential.id,
-      consumer_id = ngx.ctx.authenticated_credential.consumer_id,
-      custom_id = ngx.ctx.authenticated_consumer.custom_id,
-      username = ngx.ctx.authenticated_consumer.username
+      consumer_id = ngx.ctx.authenticated_credential.consumer_id
     }
   end
 
@@ -17,12 +16,14 @@ function _M.serialize(ngx)
       request_uri = ngx.var.scheme.."://"..ngx.var.host..":"..ngx.var.server_port..ngx.var.request_uri,
       querystring = ngx.req.get_uri_args(), -- parameters, as a table
       method = ngx.req.get_method(), -- http method
+      body = debug_ctx.req_body,
       headers = ngx.req.get_headers(),
       size = ngx.var.request_length
     },
     response = {
       status = ngx.status,
       headers = ngx.resp.get_headers(),
+      body = debug_ctx.res_body,
       size = ngx.var.bytes_sent
     },
     latencies = {
